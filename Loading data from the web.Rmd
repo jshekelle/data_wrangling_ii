@@ -1,0 +1,95 @@
+---
+title: "Data Wrangling II"
+author: "Jeanette Shekelle"
+date: "10/11/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(httr)
+
+```
+
+## Scrape a table
+
+```{r}
+url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+drug_use_xml = read_html(url)
+
+drug_use_xml
+```
+
+
+Get the tables from the HTML: used slice function to take off first row which had notes
+
+```{r}
+drug_use_xml %>% 
+  html_nodes(css = "table") %>% 
+  .[[1]] %>% 
+  html_table() %>% 
+  slice(-1) %>% 
+  as_tibble()
+```
+
+
+Learning assessment: Cost of Living 
+
+```{r}
+url = "https://www.bestplaces.net/cost_of_living/city/new_york/new_york"
+ny_cost = read_html(url)
+
+ny_cost
+```
+
+
+```{r}
+ny_cost %>% 
+  html_nodes(css = "table") %>% 
+  .[[1]] %>% 
+  html_table(header = TRUE) 
+
+```
+
+
+### Harry Potter
+
+```{r}
+hpsaga_html = read_html("https://www.imdb.com/list/ls000630791/")
+
+titles = hpsaga_html %>% 
+  html_nodes(css = "") %>% 
+  html_text()
+
+money = hp
+
+```
+
+
+Learning assessment: Napolean dynamite
+
+```{r}
+nap_dyn_html = read_html("https://www.amazon.com/product-reviews/B00005JNBQ/ref=cm_cr_arp_d_viewopt_rvwer?ie=UTF8&reviewerType=avp_only_reviews&sortBy=recent&pageNumber=1")
+
+nap_dyn_html = read_html(url)
+```
+
+
+```{r}
+review_date = nap_dyn_html %>% 
+  html_nodes(css = ".review-date") %>% 
+  html_text()
+```
+
+
+
+## APIs
+
+Get the water data
+
+```{r}
+nyc_water = GET("https://data.cityofnewyork.us/resource/waf7-5gvc.csv") %>% 
+  content("parsed")
+```
+
