@@ -1,0 +1,83 @@
+---
+title: "Strings and Factors"
+author: "Jeanette Shekelle"
+date: "10/16/2018"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(rvest)
+library(p8105.datasets)
+```
+
+### Regex
+
+```{r}
+string_vec = c("my", "name", "is", "jeanette")
+
+str_detect(string_vec, "jeanette")
+
+str_replace(string_vec, "jeanette", "Jeanette")
+
+```
+
+
+
+ Carrot represents start of string variable. Dollar sign marks end of the line: I want this to end with this character string
+
+```{r}
+string_vec = c(
+  "i think we all rule for participating",
+  "i think i have been caught",
+  "i think this will be quite fun actually",
+  "it will be fun, i think"
+  )
+
+str_detect(string_vec, "^i think")
+
+str_detect(string_vec, "i think$")
+
+```
+
+
+Multiple options for a match - use square bracket
+
+```{r}
+string_vec = c(
+  "Y'all remember Pres. HW Bush?",
+  "I saw a green bush",
+  "BBQ and Bushwalking at Molonglo Gorge",
+  "BUSH!!"
+  )
+
+str_detect(string_vec,"[Bb]ush")
+```
+
+
+Start with a number and followed immediately by a letter
+
+```{r}
+string_vec = c(
+  '7th inning stretch',
+  '1st half soon to begin. Texas won the toss.',
+  'she is 5 feet 4 inches tall',
+  '3AM - cant sleep :('
+  )
+
+str_detect(string_vec, "^[0-9][a-zA-Z]")
+```
+
+
+```{r}
+pulse_data = haven::read_sas("./public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  gather(key = visit, value = bdi, bdi_score_bl:bdi_score_12m) %>%
+  mutate(visit = str_replace(visit, "bdi_score_", ""),
+         visit = str_replace(visit, "bl", "00m"),
+         visit = fct_relevel(visit, str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+
+print(pulse_data, n = 12)
+```
+
